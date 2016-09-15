@@ -1,0 +1,7 @@
+.*~
+.*\.orig
+.*\.py[co]
+build/
+dist/
+.*\.egg-info
+\.eggs
