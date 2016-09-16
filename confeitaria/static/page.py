@@ -23,6 +23,23 @@ import confeitaria.interfaces
 
 
 class StaticPage(confeitaria.interfaces.Page):
+    """
+    ``confeitaria.static.StaticPage`` is a Confeitaria page that serves content
+    from static files.
+
+    Its constructor receives the path of the directory containing the static
+    files. If a requested file is found there, it will be served::
+
+    >>> import requests
+    >>> from inelegant.fs import temp_dir, temp_file
+    >>> from confeitaria.server import Server
+    >>> with temp_dir() as d,\\
+    ...         temp_file(dir=d, name='index.html', content='example') as f:
+    ...     page = StaticPage(directory=d)
+    ...     with Server(page):
+    ...         requests.get('http://localhost:8000/index.html').text
+    u'example'
+    """
 
     def __init__(self, directory):
         self.directory = directory

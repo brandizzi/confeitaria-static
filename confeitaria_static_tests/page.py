@@ -21,6 +21,7 @@ import unittest
 import requests
 
 from inelegant.fs import temp_file, temp_dir
+from inelegant.finder import TestFinder
 
 from confeitaria.static.page import StaticPage
 from confeitaria.server import Server
@@ -29,8 +30,12 @@ from confeitaria.server import Server
 class TestStaticPage(unittest.TestCase):
 
     def test_serve_static_page(self):
+        """
+        This tests ensure that ``StaticPage`` serves the content of a file if
+        it is found in its directory.
+        """
         with temp_dir() as d, \
-                temp_file(dir=d, name='index.html', content='example') as f:
+             temp_file(dir=d, name='index.html', content='example') as f:
 
             page = StaticPage(directory=d)
 
@@ -39,3 +44,11 @@ class TestStaticPage(unittest.TestCase):
 
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
+
+load_tests = TestFinder(
+    __name__,
+    'confeitaria.static.page'
+).load_tests
+
+if __name__ == '__main__':
+    unittest.main()

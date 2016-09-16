@@ -22,6 +22,7 @@ import unittest
 from inelegant.finder import TestFinder
 
 load_tests = TestFinder(
+    'confeitaria.static.page',
     'confeitaria_static_tests.page'
 ).load_tests
 
