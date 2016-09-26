@@ -45,10 +45,8 @@ class StaticPage(confeitaria.interfaces.Page):
         self.directory = directory
 
     def index(self, path):
-        try:
-            path = os.path.join(self.directory, path)
-        except TypeError:
-            path = ''
+        request = self.get_request();
+        path = request.args_path
 
         with open(path) as f:
             content = f.read()
