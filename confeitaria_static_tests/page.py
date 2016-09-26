@@ -45,6 +45,27 @@ class TestStaticPage(unittest.TestCase):
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
 
+    def test_serve_index_html(self):
+        """
+        This tests ensure that ``StaticPage`` will serve the content of
+        ``index.html`` if requested to serve a directory.
+        """
+        with temp_dir() as d, \
+             temp_file(dir=d, name='index.html', content='example') as f:
+
+            page = StaticPage(directory=d)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/')
+
+                self.assertEquals(200, r.status_code)
+                self.assertEquals('example', r.text)
+
+                r = requests.get('http://localhost:8000')
+
+                self.assertEquals(200, r.status_code)
+                self.assertEquals('example', r.text)
+
 load_tests = TestFinder(
     __name__,
     'confeitaria.static.page'
