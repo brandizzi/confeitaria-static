@@ -41,12 +41,16 @@ class StaticPage(confeitaria.interfaces.Page):
     u'example'
     """
 
-    def __init__(self, directory):
+    def __init__(self, directory, index_file='index.html'):
         self.directory = directory
+        self.index_file = index_file
 
-    def index(self, path):
+    def index(self, *args):
         request = self.get_request();
         path = request.args_path
+
+        if path == '':
+            path = self.index_file
 
         with open(path) as f:
             content = f.read()
