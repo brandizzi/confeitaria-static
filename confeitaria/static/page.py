@@ -49,12 +49,10 @@ class StaticPage(confeitaria.interfaces.Page):
 
     def index(self, *args):
         request = self.get_request()
-        path = request.args_path
+        path = os.path.join(self.directory, request.args_path)
 
-        if path == '':
-            path = self.index_file_name
-
-        path = os.path.join(self.directory, path)
+        if os.path.isdir(path):
+            path = os.path.join(path, self.index_file_name)
 
         with open(path) as f:
             content = f.read()
