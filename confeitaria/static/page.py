@@ -20,6 +20,7 @@
 import os
 
 import confeitaria.interfaces
+from confeitaria.responses import NotFound
 
 
 class StaticPage(confeitaria.interfaces.Page):
@@ -54,7 +55,11 @@ class StaticPage(confeitaria.interfaces.Page):
         if os.path.isdir(path):
             path = os.path.join(path, self.index_file_name)
 
-        with open(path) as f:
-            content = f.read()
+        try:
+            with open(path) as f:
+                content = f.read()
+        except IOError:
+            message = '"{0}" not found on this server.'.format(path)
+            raise NotFound(message=message)
 
         return content
