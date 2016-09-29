@@ -46,7 +46,7 @@ class StaticPage(confeitaria.interfaces.Page):
         self.index_file = index_file
 
     def index(self, *args):
-        request = self.get_request();
+        request = self.get_request()
         path = request.args_path
 
         if path == '':

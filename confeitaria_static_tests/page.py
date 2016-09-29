@@ -35,7 +35,7 @@ class TestStaticPage(unittest.TestCase):
         it is found in its directory.
         """
         with temp_dir() as d, \
-             temp_file(dir=d, name='index.html', content='example') as f:
+                temp_file(dir=d, name='index.html', content='example') as f:
 
             page = StaticPage(directory=d)
 
@@ -51,7 +51,7 @@ class TestStaticPage(unittest.TestCase):
         ``index.html`` if requested to serve a directory.
         """
         with temp_dir() as d, \
-             temp_file(dir=d, name='index.html', content='example') as f:
+                temp_file(dir=d, name='index.html', content='example') as f:
 
             page = StaticPage(directory=d)
 
@@ -65,6 +65,7 @@ class TestStaticPage(unittest.TestCase):
 
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
+
 
 load_tests = TestFinder(
     __name__,
