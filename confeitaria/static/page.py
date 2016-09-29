@@ -44,16 +44,12 @@ class StaticPage(confeitaria.interfaces.Page):
     u'example'
     """
 
-    def __init__(self, directory, index_file_name='index.html'):
+    def __init__(self, directory):
         self.directory = directory
-        self.index_file_name = index_file_name
 
     def index(self, *args):
         request = self.get_request()
-        path = os.path.join(self.directory, request.args_path)
-
-        if os.path.isdir(path):
-            path = os.path.join(path, self.index_file_name)
+        path = get_file_path(self.directory, request.args_path)
 
         try:
             with open(path) as f:
@@ -63,3 +59,12 @@ class StaticPage(confeitaria.interfaces.Page):
             raise NotFound(message=message)
 
         return content
+
+
+def get_file_path(root_dir, relative_path, index_file_name='index.html'):
+    path = os.path.join(root_dir, relative_path)
+
+    if os.path.isdir(path):
+        path = os.path.join(path, index_file_name)
+
+    return path
