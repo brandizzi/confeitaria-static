@@ -72,8 +72,8 @@ class TestStaticPage(unittest.TestCase):
         from a subdirectory of the served dir.
         """
         with temp_dir() as d, \
-                temp_dir(where=d, name='a/b/c') as subdir, \
-                temp_file(dir=subdir, name='index.html', content='example') as f:
+                temp_dir(where=d, name='a/b/c') as sd, \
+                temp_file(dir=sd, name='index.html', content='example') as f:
 
             page = StaticPage(directory=d)
 
@@ -109,8 +109,8 @@ class TestStaticPage(unittest.TestCase):
         not be found in a subdirectory.
         """
         with temp_dir() as d, \
-                temp_dir(where=d, name='a/b/c') as subdir, \
-                temp_file(dir=subdir, name='index.html', content='example') as f:
+                temp_dir(where=d, name='a/b/c') as sd, \
+                temp_file(dir=sd, name='index.html', content='example') as f:
 
             page = StaticPage(directory=d)
 
