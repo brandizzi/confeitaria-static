@@ -38,19 +38,21 @@ class StaticPage(confeitaria.interfaces.Page):
     ...     page = StaticPage(directory=d)
     ...     with Server(page):
     ...         requests.get('http://localhost:8000/index.html').text
+    ...         requests.get('http://localhost:8000/').text
+    u'example'
     u'example'
     """
 
-    def __init__(self, directory, index_file='index.html'):
+    def __init__(self, directory, index_file_name='index.html'):
         self.directory = directory
-        self.index_file = index_file
+        self.index_file_name = index_file_name
 
     def index(self, *args):
         request = self.get_request()
         path = request.args_path
 
         if path == '':
-            path = self.index_file
+            path = self.index_file_name
 
         path = os.path.join(self.directory, path)
 
