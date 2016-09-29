@@ -52,6 +52,8 @@ class StaticPage(confeitaria.interfaces.Page):
         if path == '':
             path = self.index_file
 
+        path = os.path.join(self.directory, path)
+
         with open(path) as f:
             content = f.read()
 
