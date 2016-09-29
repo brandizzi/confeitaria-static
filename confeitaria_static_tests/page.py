@@ -66,6 +66,28 @@ class TestStaticPage(unittest.TestCase):
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
 
+    def test_serve_subdir(self):
+        """
+        This tests ensure that ``StaticPage`` will serve the content of files
+        from a subdirectory of the served dir.
+        """
+        with temp_dir() as d, \
+                temp_dir(where=d, name='a/b/c') as subdir, \
+                temp_file(dir=subdir, name='index.html', content='example') as f:
+
+            page = StaticPage(directory=d)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/a/b/c/index.html')
+
+                self.assertEquals(200, r.status_code)
+                self.assertEquals('example', r.text)
+
+                r = requests.get('http://localhost:8000/a/b/c/')
+
+                self.assertEquals(200, r.status_code)
+                self.assertEquals('example', r.text)
+
 
 load_tests = TestFinder(
     __name__,
