@@ -88,6 +88,37 @@ class TestStaticPage(unittest.TestCase):
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
 
+    def test_serve_serve_404(self):
+        """
+        This tests ensure that ``StaticPage`` will return 404 if a file could
+        not be found.
+        """
+        with temp_dir() as d, \
+                temp_file(dir=d, name='index.html', content='example') as f:
+
+            page = StaticPage(directory=d)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/nofile.html')
+
+                self.assertEquals(404, r.status_code)
+
+    def test_serve_serve_404_subdir(self):
+        """
+        This tests ensure that ``StaticPage`` will return 404 if a file could
+        not be found in a subdirectory.
+        """
+        with temp_dir() as d, \
+                temp_dir(where=d, name='a/b/c') as subdir, \
+                temp_file(dir=subdir, name='index.html', content='example') as f:
+
+            page = StaticPage(directory=d)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/a/b/c/nofile.html')
+
+                self.assertEquals(404, r.status_code)
+
 
 load_tests = TestFinder(
     __name__,
