@@ -62,6 +62,23 @@ class StaticPage(confeitaria.interfaces.Page):
 
 
 def get_file_path(root_dir, relative_path, index_file_name='index.html'):
+    """
+    Returns the path of a file inside a specific directory.
+
+    Given a directory and a relative path, returns the first one joined with
+    the relative path::
+
+    >>> get_file_path('/a/b', 'c/d/file.txt')
+    '/a/b/c/d/file.txt'
+
+    If the relative path points to an existing directory, the returned path
+    should have the name of a file appended to it (generally, ``index.html``)::
+
+    >>> from inelegant.fs import temp_dir
+    >>> with temp_dir() as d1, temp_dir(where=d1, name='d2'):
+    ...     get_file_path(d1, 'd2').endswith('d2/index.html')
+    True
+    """
     path = os.path.join(root_dir, relative_path)
 
     if os.path.isdir(path):
