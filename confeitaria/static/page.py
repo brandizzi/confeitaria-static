@@ -52,9 +52,13 @@ class StaticPage(confeitaria.interfaces.Page):
         path = get_file_path(self.directory, request.args_path)
 
         try:
+            if not is_parent(self.directory, path):
+                raise ValueError(
+                    '{0} is not in {1}'.format(path, self.directory))
+
             with open(path) as f:
                 content = f.read()
-        except IOError:
+        except (IOError, ValueError):
             message = '"{0}" not found on this server.'.format(path)
             raise NotFound(message=message)
 
@@ -85,3 +89,19 @@ def get_file_path(root_dir, relative_path, index_file_name='index.html'):
         path = os.path.join(path, index_file_name)
 
     return path
+
+def is_parent(parent_path, path):
+    parent_path = os.path.realpath(parent_path)
+    path = os.path.realpath(path)
+
+    if parent_path == path:
+        value = True
+    elif is_root(path):
+        value = False
+    else:
+        value = is_parent(parent_path, os.path.dirname(path))
+
+    return value
+
+def is_root(path):
+    return os.path.dirname(path) == path
