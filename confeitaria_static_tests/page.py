@@ -119,6 +119,23 @@ class TestStaticPage(unittest.TestCase):
 
                 self.assertEquals(404, r.status_code)
 
+    def test_serve_serve_404_parent_dir(self):
+        """
+        This tests ensure that ``StaticPage`` will return 404 if a path tries
+        to access a parent directory.
+        """
+        with temp_dir() as root_dir, \
+                temp_dir(where=root_dir) as d, \
+                temp_file(where=root_dir, name='passwd', content='example'):
+
+            page = StaticPage(directory=d)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/../passwd')
+
+                self.assertEquals(404, r.status_code)
+                self.assertNotEquals('example', r.text)
+
 
 load_tests = TestFinder(
     __name__,
