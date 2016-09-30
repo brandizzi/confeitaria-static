@@ -91,6 +91,19 @@ def get_file_path(root_dir, relative_path, index_file_name='index.html'):
     return path
 
 def is_parent(parent_path, path):
+    """
+    ``is_parent()`` checks if ``path`` is inside ``parent_path``. If it is,
+    ``is_parent()`` returns ``True``::
+
+    >>> is_parent('/a/b/', '/a/b/c')
+    True
+    >>> is_parent('/a/b', '/a/b')
+    True
+    >>> is_parent('/a/b', '/a/c')
+    False
+    >>> is_parent('/a/b', '/a/b/../c')
+    False
+    """
     parent_path = os.path.realpath(parent_path)
     path = os.path.realpath(path)
 
@@ -104,4 +117,12 @@ def is_parent(parent_path, path):
     return value
 
 def is_root(path):
+    """
+    ``is_root()`` checks if ``path`` is the root directory::
+
+    >>> is_root(os.path.abspath(os.sep))
+    True
+    >>> is_root('/a/b')
+    False
+    """
     return os.path.dirname(path) == path
