@@ -26,6 +26,8 @@ from inelegant.finder import TestFinder
 from confeitaria.static.page import StaticPage
 from confeitaria.server import Server
 
+from confeitaria.static.store import FileStore
+
 
 class TestStaticPage(unittest.TestCase):
 
@@ -135,6 +137,23 @@ class TestStaticPage(unittest.TestCase):
 
                 self.assertEquals(404, r.status_code)
                 self.assertNotEquals('example', r.text)
+
+    def test_page_can_use_store(self):
+        """
+        This tests ensure that ``StaticPage`` can receive a store instead of
+        a directory directly.
+        """
+        with temp_dir() as d, \
+                temp_file(where=d, name='index.html', content='example') as f:
+
+            store = FileStore(directory=d)
+            page = StaticPage(store=store)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/index.html')
+
+                self.assertEquals(200, r.status_code)
+                self.assertEquals('example', r.text)
 
 
 load_tests = TestFinder(
