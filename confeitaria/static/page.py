@@ -22,6 +22,8 @@ import os
 import confeitaria.interfaces
 from confeitaria.responses import NotFound
 
+from confeitaria.static.store import FileStore
+
 
 class StaticPage(confeitaria.interfaces.Page):
     """
@@ -44,23 +46,20 @@ class StaticPage(confeitaria.interfaces.Page):
     u'example'
     """
 
-    def __init__(self, directory):
-        self.directory = directory
+    def __init__(self, directory=None, store=None):
+        if store is None and directory is not None:
+            self.store = FileStore(directory=directory)
+        else:
+            self.store = store
 
     def index(self, *args):
         request = self.get_request()
-        path = get_file_path(self.directory, request.args_path)
+        path = request.args_path
 
         try:
-            if not is_parent(self.directory, path):
-                raise ValueError(
-                    '{0} is not in {1}'.format(path, self.directory))
-
-            with open(path) as f:
-                content = f.read()
-        except (IOError, ValueError):
-            message = '"{0}" not found on this server.'.format(path)
-            raise NotFound(message=message)
+            content = self.store.read(path)
+        except ValueError:
+            raise NotFound(message='"{0}" not found.'.format(path))
 
         return content
 
@@ -90,6 +89,7 @@ def get_file_path(root_dir, relative_path, index_file_name='index.html'):
 
     return path
 
+
 def is_parent(parent_path, path):
     """
     ``is_parent()`` checks if ``path`` is inside ``parent_path``. If it is,
@@ -115,6 +115,7 @@ def is_parent(parent_path, path):
         value = is_parent(parent_path, os.path.dirname(path))
 
     return value
+
 
 def is_root(path):
     """
