@@ -22,7 +22,8 @@ import unittest
 from inelegant.finder import TestFinder
 
 load_tests = TestFinder(
-    'confeitaria_static_tests.page'
+    'confeitaria_static_tests.page',
+    'confeitaria_static_tests.store'
 ).load_tests
 
 if __name__ == "__main__":
