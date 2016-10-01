@@ -59,8 +59,16 @@ def get_file_path(root_dir, relative_path, default_file_name='index.html'):
 
     >>> from inelegant.fs import temp_dir
     >>> with temp_dir() as d1, temp_dir(where=d1, name='d2'):
-    ...     get_file_path(d1, 'd2').endswith('d2/index.html')
-    True
+    ...     os.path.basename(get_file_path(d1, 'd2'))
+    'index.html'
+
+    The default file name can be overriden::
+
+    >>> from inelegant.fs import temp_dir
+    >>> with temp_dir() as d1, temp_dir(where=d1, name='d2'):
+    ...     path = get_file_path(d1, 'd2', default_file_name='test.txt')
+    ...     os.path.basename(path)
+    'test.txt'
     """
     path = os.path.join(root_dir, relative_path)
 
