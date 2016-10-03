@@ -21,6 +21,40 @@ import os
 
 
 class FileStore(object):
+    """
+    ``FileStore`` is the object responsible to access a file given an path. To
+    be created, it needs to know the directory where to find the file::
+
+    >>> from inelegant.fs import temp_dir, temp_file
+    ... with temp_dir() as d:
+    ...     store = FileStore(directory=d)
+
+    If the directory exists, it will read content of the files in it with the
+    ``read()`` command::
+
+    >>> with temp_dir() as d, temp_file(where=d, content='example') as f:
+    ...     store = FileStore(directory=d)
+    ...     store.read(f)
+    'example'
+
+    If the path is a directory, it will try to read ``index.html`` in it by
+    default::
+
+    >>> with temp_dir() as d, \\
+    ...         temp_file(where=d, name='index.html', content='default'):
+    ...     store = FileStore(directory=d)
+    ...     store.read('')
+    'default'
+
+    If no file exists, the ``read()`` method raises ``ValueError``::
+
+    >>> with temp_dir() as d:
+    ...     store = FileStore(directory=d)
+    ...     store.read('nofile.html')   # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+      ...
+    ValueError: ...
+    """
 
     def __init__(self, directory, default_file_name='index.html'):
         self.directory = directory
