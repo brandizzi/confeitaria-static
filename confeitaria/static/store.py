@@ -104,6 +104,8 @@ def get_file_path(root_dir, relative_path, default_file_name='index.html'):
     ...     os.path.basename(path)
     'test.txt'
     """
+    relative_path = relative_path.lstrip('/')
+
     path = os.path.join(root_dir, relative_path)
 
     if os.path.isdir(path):
