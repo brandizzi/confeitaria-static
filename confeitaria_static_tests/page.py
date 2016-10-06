@@ -26,7 +26,7 @@ from inelegant.finder import TestFinder
 from confeitaria.static.page import StaticPage
 from confeitaria.server import Server
 
-from confeitaria.static.store import FileStore
+from confeitaria.static.store.file import FileStore
 
 
 class TestStaticPage(unittest.TestCase):

@@ -22,7 +22,7 @@ import unittest
 from inelegant.fs import temp_file, temp_dir
 from inelegant.finder import TestFinder
 
-from confeitaria.static.store import FileStore
+from confeitaria.static.store.file import FileStore
 
 
 class TestFileStore(unittest.TestCase):
@@ -123,7 +123,7 @@ class TestFileStore(unittest.TestCase):
 
 load_tests = TestFinder(
     __name__,
-    'confeitaria.static.store'
+    'confeitaria.static.store.file'
 ).load_tests
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ import os
 import confeitaria.interfaces
 from confeitaria.responses import NotFound
 
-from confeitaria.static.store import FileStore
+from confeitaria.static.store.file import FileStore
 
 
 class StaticPage(confeitaria.interfaces.Page):
@@ -36,6 +36,7 @@ class StaticPage(confeitaria.interfaces.Page):
     >>> import requests
     >>> from inelegant.fs import temp_dir, temp_file
     >>> from confeitaria.server import Server
+    >>> from confeitaria.static.page import StaticPage
     >>> with temp_dir() as d,\\
     ...         temp_file(dir=d, name='index.html', content='example') as f:
     ...     page = StaticPage(directory=d)

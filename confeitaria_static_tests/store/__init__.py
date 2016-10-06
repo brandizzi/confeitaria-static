@@ -16,15 +16,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with Confeitaria Static.  If not, see <http://www.gnu.org/licenses/>.
-
-import unittest
-
-from inelegant.finder import TestFinder
-
-load_tests = TestFinder(
-    'confeitaria_static_tests.page',
-    'confeitaria_static_tests.store.file'
-).load_tests
-
-if __name__ == "__main__":
-    unittest.main()
