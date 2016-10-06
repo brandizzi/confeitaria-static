@@ -32,9 +32,10 @@ class FileStore(object):
     If the directory exists, it will read content of the files in it with the
     ``read()`` command::
 
-    >>> with temp_dir() as d, temp_file(where=d, content='example') as f:
+    >>> with temp_dir() as d, \\
+    ...         temp_file(where=d, name='test.html', content='example'):
     ...     store = FileStore(directory=d)
-    ...     store.read(f)
+    ...     store.read('test.html')
     'example'
 
     If the path is a directory, it will try to read ``index.html`` in it by
