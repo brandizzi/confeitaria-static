@@ -108,6 +108,18 @@ class TestFileStore(unittest.TestCase):
             with self.assertRaises(ValueError):
                 store.read('/../passwd')
 
+    def test_read_absolute_paths(self):
+        """
+        The store should resolve paths that are "absolute" - i.e., start with
+        a slash.
+        """
+        with temp_dir() as d, \
+                temp_dir(where=d, name='a/b/c') as sd, \
+                temp_file(where=sd, name='sub.txt', content='subdir') as f:
+
+            store = FileStore(directory=d)
+            self.assertEquals('subdir', store.read('/a/b/c/sub.txt'))
+
 
 load_tests = TestFinder(
     __name__,
