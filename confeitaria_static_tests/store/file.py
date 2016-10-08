@@ -16,6 +16,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with Confeitaria Static.  If not, see <http://www.gnu.org/licenses/>.
+import os
+import os.path
 
 import unittest
 
@@ -27,12 +29,31 @@ from confeitaria.static.store.file import FileStore
 
 class TestFileStore(unittest.TestCase):
 
+    def make_container(self):
+        """
+        Create a temporary directory to be given to the file store to be
+        tested.
+        """
+        return temp_dir()
+
+    def make_document(self, name, where, content='', path=None):
+        """
+        Create a temporary file to be given to the file store to be tested.
+        """
+        if path is not None:
+            path = os.path.join(where, path)
+            os.makedirs(path)
+        else:
+            path = where
+
+        return temp_file(where=path, name=name, content=content)
+
     def test_read(self):
         """
         This tests ensures that ``FileStore`` can read the content of a file.
         """
-        with temp_dir() as d, \
-                temp_file(where=d, name='test.txt', content='read') as f:
+        with self.make_container() as d, \
+                self.make_document('test.txt', where=d, content='read') as f:
 
             store = FileStore(directory=d)
             self.assertEquals('read', store.read('test.txt'))
@@ -42,19 +63,19 @@ class TestFileStore(unittest.TestCase):
         If given an empty path, the store should read content from a default
         file, if the file exists.
         """
-        with temp_dir() as d, \
-                temp_file(where=d, name='default.txt', content='default') as f:
+        with self.make_container() as d, \
+                self.make_document('default.txt', where=d, content='abc') as f:
 
             store = FileStore(directory=d, default_file_name='default.txt')
-            self.assertEquals('default', store.read(''))
+            self.assertEquals('abc', store.read(''))
 
     def test_read_from_subdir(self):
         """
         The store should read content from files in a subdirectory.
         """
-        with temp_dir() as d, \
-                temp_dir(where=d, name='a/b/c') as sd, \
-                temp_file(where=sd, name='sub.txt', content='subdir') as f:
+        with self.make_container() as d, \
+                self.make_document(
+                    'sub.txt', where=d, path='a/b/c', content='subdir') as f:
 
             store = FileStore(directory=d)
             self.assertEquals('subdir', store.read('a/b/c/sub.txt'))
@@ -64,18 +85,18 @@ class TestFileStore(unittest.TestCase):
         If given a path to a dir, the store should read content from a default
         file, if the file exists.
         """
-        with temp_dir() as d1, \
-                temp_dir(where=d1, name='a/b/c') as d2, \
-                temp_file(where=d2, name='test.txt', content='defsub') as f:
+        with self.make_container() as d, \
+                self.make_document(
+                    'test.txt', where=d, path='a/b/c', content='defsub') as f:
 
-            store = FileStore(directory=d1, default_file_name='test.txt')
+            store = FileStore(directory=d, default_file_name='test.txt')
             self.assertEquals('defsub', store.read('a/b/c'))
 
     def test_raise_valueerror_on_not_found(self):
         """
         If the file does not exist, it should raise ``ValueError``.
         """
-        with temp_dir() as d:
+        with self.make_container() as d:
             store = FileStore(directory=d)
 
             with self.assertRaises(ValueError):
@@ -86,10 +107,8 @@ class TestFileStore(unittest.TestCase):
         If the file does not exist on a subdirectory, it should raise
         ``ValueError``.
         """
-        with temp_dir() as d1, \
-                temp_dir(where=d1, name='a/b/c') as d2:
-
-            store = FileStore(directory=d1)
+        with self.make_container() as d:
+            store = FileStore(directory=d)
 
             with self.assertRaises(ValueError):
                 store.read('a/b/c/nofile.txt')
@@ -113,9 +132,9 @@ class TestFileStore(unittest.TestCase):
         The store should resolve paths that are "absolute" - i.e., start with
         a slash.
         """
-        with temp_dir() as d, \
-                temp_dir(where=d, name='a/b/c') as sd, \
-                temp_file(where=sd, name='sub.txt', content='subdir') as f:
+        with self.make_container() as d, \
+                self.make_document(
+                    'sub.txt', where=d, path='a/b/c', content='subdir') as f:
 
             store = FileStore(directory=d)
             self.assertEquals('subdir', store.read('/a/b/c/sub.txt'))
