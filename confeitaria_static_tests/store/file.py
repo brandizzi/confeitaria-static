@@ -29,6 +29,12 @@ from confeitaria_static_tests.store.reference import ReferenceStoreTestCase
 
 class TestFileStore(ReferenceStoreTestCase):
 
+    def get_store(self, container):
+        """
+        Create a file store with the given arguments.
+        """
+        return FileStore(directory=container)
+
     def make_container(self):
         """
         Create a temporary directory to be given to the file store to be

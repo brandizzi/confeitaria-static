@@ -29,7 +29,6 @@ from confeitaria.static.store.file import FileStore
 
 class ReferenceStoreTestCase(unittest.TestCase):
 
-
     def test_read(self):
         """
         This tests ensures that the store can read the content of a file.
@@ -37,7 +36,7 @@ class ReferenceStoreTestCase(unittest.TestCase):
         with self.make_container() as d, \
                 self.make_document('test.txt', where=d, content='read') as f:
 
-            store = FileStore(directory=d)
+            store = self.get_store(container=d)
             self.assertEquals('read', store.read('test.txt'))
 
     def test_read_default_file(self):
@@ -59,7 +58,7 @@ class ReferenceStoreTestCase(unittest.TestCase):
                 self.make_document(
                     'sub.txt', where=d, path='a/b/c', content='subdir') as f:
 
-            store = FileStore(directory=d)
+            store = self.get_store(container=d)
             self.assertEquals('subdir', store.read('a/b/c/sub.txt'))
 
     def test_read_default_file_from_subdir(self):
@@ -79,7 +78,7 @@ class ReferenceStoreTestCase(unittest.TestCase):
         If the file does not exist, it should raise ``ValueError``.
         """
         with self.make_container() as d:
-            store = FileStore(directory=d)
+            store = self.get_store(container=d)
 
             with self.assertRaises(ValueError):
                 store.read('nofile.txt')
@@ -90,7 +89,7 @@ class ReferenceStoreTestCase(unittest.TestCase):
         ``ValueError``.
         """
         with self.make_container() as d:
-            store = FileStore(directory=d)
+            store = self.get_store(container=d)
 
             with self.assertRaises(ValueError):
                 store.read('a/b/c/nofile.txt')
@@ -104,5 +103,5 @@ class ReferenceStoreTestCase(unittest.TestCase):
                 self.make_document(
                     'sub.txt', where=d, path='a/b/c', content='subdir') as f:
 
-            store = FileStore(directory=d)
+            store = self.get_store(container=d)
             self.assertEquals('subdir', store.read('/a/b/c/sub.txt'))
