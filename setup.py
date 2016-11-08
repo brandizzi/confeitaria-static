@@ -32,5 +32,5 @@ setup(
     install_requires=['confeitaria>=0.1a2'],
     test_suite='confeitaria_static_tests',
     test_loader='unittest:TestLoader',
-    tests_require=['inelegant>=0.0.7', 'requests']
+    tests_require=['inelegant>=0.0.9', 'requests']
 )
