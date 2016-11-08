@@ -17,15 +17,23 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Confeitaria Static.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+import pkgutil
+import os.path
+import errno
 
-from inelegant.finder import TestFinder
 
-load_tests = TestFinder(
-    'confeitaria_static_tests.page',
-    'confeitaria_static_tests.store.file',
-    'confeitaria_static_tests.store.resource'
-).load_tests
+class ResourceStore(object):
 
-if __name__ == "__main__":
-    unittest.main()
+    def __init__(self, package, default_file_name='index.html'):
+        self.package = package
+        self.default_file_name = default_file_name
+
+    def read(self, path):
+        try:
+            return pkgutil.get_data(self.package, path)
+        except IOError as e:
+            if e.errno == errno.EISDIR:
+                path = os.path.join(path, self.default_file_name)
+                return self.read(path)
+            else:
+                raise ValueError('{0} not found.'.format(path))
