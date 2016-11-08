@@ -24,8 +24,6 @@ import unittest
 from inelegant.fs import temp_file, temp_dir
 from inelegant.finder import TestFinder
 
-from confeitaria.static.store.file import FileStore
-
 
 class ReferenceStoreTestCase(unittest.TestCase):
 
@@ -47,7 +45,8 @@ class ReferenceStoreTestCase(unittest.TestCase):
         with self.make_container() as d, \
                 self.make_document('default.txt', where=d, content='abc') as f:
 
-            store = FileStore(directory=d, default_file_name='default.txt')
+            store = self.get_store(
+                container=d, default_file_name='default.txt')
             self.assertEquals('abc', store.read(''))
 
     def test_read_from_subdir(self):
@@ -70,7 +69,7 @@ class ReferenceStoreTestCase(unittest.TestCase):
                 self.make_document(
                     'test.txt', where=d, path='a/b/c', content='defsub') as f:
 
-            store = FileStore(directory=d, default_file_name='test.txt')
+            store = self.get_store(container=d, default_file_name='test.txt')
             self.assertEquals('defsub', store.read('a/b/c'))
 
     def test_raise_valueerror_on_not_found(self):

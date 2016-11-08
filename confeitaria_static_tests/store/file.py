@@ -18,6 +18,7 @@
 # along with Confeitaria Static.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import os.path
+import unittest
 
 from inelegant.fs import temp_file, temp_dir
 from inelegant.finder import TestFinder
@@ -27,13 +28,31 @@ from confeitaria.static.store.file import FileStore
 from confeitaria_static_tests.store.reference import ReferenceStoreTestCase
 
 
-class TestFileStore(ReferenceStoreTestCase):
+class TestFileStore(unittest.TestCase):
 
-    def get_store(self, container):
+    def test_raise_valueerror_if_outside_directory(self):
+        """
+        If the path leads to outside the directory given to the store, it
+        it should raise ``ValueError``.
+        """
+        with temp_dir() as root_dir, \
+                temp_dir(where=root_dir) as d, \
+                temp_file(where=root_dir, name='passwd', content='mypass'):
+
+            store = FileStore(directory=d)
+
+            with self.assertRaises(ValueError):
+                store.read('/../passwd')
+
+
+class ReferenceTestFileStore(ReferenceStoreTestCase):
+
+    def get_store(self, container, default_file_name=None):
         """
         Create a file store with the given arguments.
         """
-        return FileStore(directory=container)
+        return FileStore(
+            directory=container, default_file_name=default_file_name)
 
     def make_container(self):
         """
@@ -53,20 +72,6 @@ class TestFileStore(ReferenceStoreTestCase):
             path = where
 
         return temp_file(where=path, name=name, content=content)
-
-    def test_raise_valueerror_if_outside_directory(self):
-        """
-        If the path leads to outside the directory given to the store, it
-        it should raise ``ValueError``.
-        """
-        with temp_dir() as root_dir, \
-                temp_dir(where=root_dir) as d, \
-                temp_file(where=root_dir, name='passwd', content='mypass'):
-
-            store = FileStore(directory=d)
-
-            with self.assertRaises(ValueError):
-                store.read('/../passwd')
 
 
 load_tests = TestFinder(
