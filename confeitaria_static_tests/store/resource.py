@@ -56,7 +56,7 @@ class ReferenceTestResourceStore(ReferenceStoreTestCase):
 
 load_tests = TestFinder(
     __name__,
-    'confeitaria.static.store.file',
+    'confeitaria.static.store.resource',
     skip=ReferenceStoreTestCase
 ).load_tests
 
