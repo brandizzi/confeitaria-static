@@ -30,6 +30,22 @@ from confeitaria.static.store.fake import FakeStore
 from confeitaria_static_tests.store.reference import ReferenceStoreTestCase
 
 
+class TestAggregateStore(unittest.TestCase):
+
+    def test_get_from_primary_store(self):
+        """
+        If the primary store can provide the content, then it should,
+        regardless of what the secondary store could do.
+        """
+        primary = FakeStore({'test.html': 'primary content'})
+        secondary = FakeStore({'test.html': 'secondary_store content'})
+
+        aggregate = AggregateStore(primary, secondary)
+
+        self.assertEquals(
+            primary.read('test.html'), aggregate.read('test.html'))
+
+
 class ReferenceAggregateStoreTestCase(ReferenceStoreTestCase):
 
     def get_store(self, container, default_file_name='index.html'):
