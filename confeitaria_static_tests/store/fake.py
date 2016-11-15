@@ -45,27 +45,30 @@ class ReferenceTestFileStore(ReferenceStoreTestCase):
         """
         yield {}
 
-    @contextlib.contextmanager
     def make_document(self, name, where, content='', path=None):
         """
         Adds a new document to the dict of documents.
         """
-        if path is not None:
-            path = os.path.join(path, name)
-        else:
-            path = name
+        return available_document(where, path, name, content)
 
-        previous_content = where.get(path, None)
 
-        where[path] = content
+@contextlib.contextmanager
+def available_document(document_dict, path, name, content):
+    if path is not None:
+        path = os.path.join(path, name)
+    else:
+        path = name
 
-        try:
-            yield
-        finally:
-            del where[path]
+    previous_content = document_dict.get(path, None)
+    document_dict[path] = content
 
-            if previous_content is not None:
-                where[path] = previous_content
+    try:
+        yield
+    finally:
+        del document_dict[path]
+
+        if previous_content is not None:
+            document_dict[path] = previous_content
 
 
 load_tests = TestFinder(

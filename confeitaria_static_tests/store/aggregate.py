@@ -24,10 +24,11 @@ import contextlib
 
 from inelegant.finder import TestFinder
 
-from confeitaria.static.store.aggregate import AggregateStore
 from confeitaria.static.store.fake import FakeStore
+from confeitaria.static.store.aggregate import AggregateStore
 
 from confeitaria_static_tests.store.reference import ReferenceStoreTestCase
+from confeitaria_static_tests.store.fake import available_document
 
 
 class TestAggregateStore(unittest.TestCase):
@@ -77,7 +78,6 @@ class ReferenceAggregateStoreTestCase(ReferenceStoreTestCase):
 
 class ReferenceTestPrimaryInAggregateStore(ReferenceAggregateStoreTestCase):
 
-    @contextlib.contextmanager
     def make_document(self, name, where, content='', path=None):
         """
         This case tests the aggregate store but sets up the primary store of
@@ -87,29 +87,13 @@ class ReferenceTestPrimaryInAggregateStore(ReferenceAggregateStoreTestCase):
         test case ensures that, whenever the primary store can provide some
         content, it will provide, regardless of the secondary story.
         """
-        primary, secondary = where
+        primary, _ = where
 
-        if path is not None:
-            path = os.path.join(path, name)
-        else:
-            path = name
-
-        previous_content = primary.get(path, None)
-
-        primary[path] = content
-
-        try:
-            yield
-        finally:
-            del primary[path]
-
-            if previous_content is not None:
-                primary[path] = previous_content
+        return available_document(primary, path, name, content)
 
 
 class ReferenceTestSecondaryInAggregateStore(ReferenceAggregateStoreTestCase):
 
-    @contextlib.contextmanager
     def make_document(self, name, where, content='', path=None):
         """
         This case tests the aggregate store but sets up the secondary store of
@@ -119,24 +103,9 @@ class ReferenceTestSecondaryInAggregateStore(ReferenceAggregateStoreTestCase):
         whenever the primary store failsto provide some content, the secondary
         will provide it if it can.
         """
-        primary, secondary = where
+        _, secondary = where
 
-        if path is not None:
-            path = os.path.join(path, name)
-        else:
-            path = name
-
-        previous_content = secondary.get(path, None)
-
-        secondary[path] = content
-
-        try:
-            yield
-        finally:
-            del secondary[path]
-
-            if previous_content is not None:
-                secondary[path] = previous_content
+        return available_document(secondary, path, name, content)
 
 
 load_tests = TestFinder(
