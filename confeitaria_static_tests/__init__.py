@@ -23,6 +23,7 @@ from inelegant.finder import TestFinder
 
 load_tests = TestFinder(
     'confeitaria_static_tests.page',
+    'confeitaria_static_tests.store.aggregate',
     'confeitaria_static_tests.store.fake',
     'confeitaria_static_tests.store.file',
     'confeitaria_static_tests.store.resource'
