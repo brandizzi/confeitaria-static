@@ -21,7 +21,29 @@ import os
 
 
 class FakeStore(object):
+    """
+    ``FakeStore`` is a "fake cake," a mock object which passes as the default
+    implementation of all stores.
 
+    Stores retrieve content given a path. In ``FakeStore``, we inform which
+    path is to be mapped to which content via a dict given to the constructor::
+
+    >>> store = FakeStore({'test.html': 'my content'})
+
+    Once we have a store, we can get the content from the path with the
+    ``read()`` method::
+
+    >>> store.read('test.html')
+    'my content'
+
+    If we request a content that does not exist, ``read()`` raises
+    ``ValueError``::
+
+    >>> store.read('nofile.html')
+    Traceback (most recent call last):
+      ...
+    ValueError: Failed to read nofile.html. Reason: 'nofile.html'
+    """
 
     def __init__(self, documents, default_file_name='index.html'):
         self.documents = documents
