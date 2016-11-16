@@ -89,7 +89,7 @@ class ReferenceTestPrimaryInAggregateStore(ReferenceAggregateStoreTestCase):
         """
         primary, _ = where
 
-        return available_document(primary, path, name, content)
+        return available_document(primary, name, content, path=path)
 
 
 class ReferenceTestSecondaryInAggregateStore(ReferenceAggregateStoreTestCase):
@@ -105,7 +105,7 @@ class ReferenceTestSecondaryInAggregateStore(ReferenceAggregateStoreTestCase):
         """
         _, secondary = where
 
-        return available_document(secondary, path, name, content)
+        return available_document(secondary, name, content, path=path)
 
 
 load_tests = TestFinder(

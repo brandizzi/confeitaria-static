@@ -49,11 +49,60 @@ class ReferenceTestFileStore(ReferenceStoreTestCase):
         """
         Adds a new document to the dict of documents.
         """
-        return available_document(where, path, name, content)
+        return available_document(where, name, content, path=path)
 
 
 @contextlib.contextmanager
-def available_document(document_dict, path, name, content):
+def available_document(document_dict, name, content, path=None):
+    """
+    ``available_document`` is a context manager that adds a value to a
+    dictonary and removes it once its context is exited.
+
+    ``FakeStore`` objects are store implementations that receive their
+    "documents" from a dict. ``available_document()`` helps to add a content
+    to such a dict. Thsi context manager expects three arguments: the dict,
+    the name of the "document" (which will serve as a key) and the content
+    which will be the value.
+
+    So, given a dict...
+
+    ::
+
+    >>> d = {}
+
+    ...it will add the given content to the given name::
+
+    >>> with available_document(d, 'test.html', 'example'):
+    ...     d
+    {'test.html': 'example'}
+
+    Once the context is gone, however, the value will be removed from the
+    dict::
+
+    >>> d
+    {}
+
+    If the dict was holding another value before...
+
+    ::
+
+    >>> d = {'test.html': 'previous content'}
+
+    ...the value will be restored::
+
+    >>> with available_document(d, 'test.html', 'TEMPORARY content'):
+    ...     d
+    {'test.html': 'TEMPORARY content'}
+    >>> d
+    {'test.html': 'previous content'}
+
+    ``available_document()`` can also receive a fourth argument, ``path``. This
+    path will be prepended to the name as a URL path::
+
+    >>> with available_document({}, 'test.html', 'content', path='abc') as d:
+    ...     d
+    {'abc/test.html': 'content'}
+    """
     if path is not None:
         path = os.path.join(path, name)
     else:
@@ -63,7 +112,7 @@ def available_document(document_dict, path, name, content):
     document_dict[path] = content
 
     try:
-        yield
+        yield document_dict
     finally:
         del document_dict[path]
 
