@@ -23,6 +23,7 @@ import unittest
 import contextlib
 
 from inelegant.finder import TestFinder
+from inelegant.dict import temp_key
 
 from confeitaria.static.store.fake import FakeStore
 
@@ -52,7 +53,6 @@ class ReferenceTestFileStore(ReferenceStoreTestCase):
         return available_document(where, name, content, path=path)
 
 
-@contextlib.contextmanager
 def available_document(document_dict, name, content, path=None):
     """
     ``available_document`` is a context manager that adds a value to a
@@ -108,17 +108,7 @@ def available_document(document_dict, name, content, path=None):
     else:
         path = name
 
-    previous_content = document_dict.get(path, None)
-    document_dict[path] = content
-
-    try:
-        yield document_dict
-    finally:
-        del document_dict[path]
-
-        if previous_content is not None:
-            document_dict[path] = previous_content
-
+    return temp_key(document_dict, path, content)
 
 load_tests = TestFinder(
     __name__,
