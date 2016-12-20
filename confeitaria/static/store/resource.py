@@ -24,7 +24,7 @@ import errno
 
 class ResourceStore(object):
 
-    def __init__(self, package, default_file_name='index.html'):
+    def __init__(self, package, directory, default_file_name='index.html'):
         """
         ``ResourceStore``` is a store to read content from package resources.
 
@@ -49,14 +49,19 @@ class ResourceStore(object):
         ValueError: ...
         """
         self.package = package
+        self.directory = directory
         self.default_file_name = default_file_name
 
     def read(self, path):
+        path = path.strip('/')
+        resource_path = os.path.join(self.directory, path)
+
         try:
-            return pkgutil.get_data(self.package, path)
+            return pkgutil.get_data(self.package, resource_path)
         except IOError as e:
             if e.errno == errno.EISDIR:
-                path = os.path.join(path, self.default_file_name)
-                return self.read(path)
+                resource_path = os.path.join(path, self.default_file_name)
+
+                return self.read(resource_path)
             else:
                 raise ValueError('{0} not found.'.format(path))
