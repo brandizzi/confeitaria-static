@@ -18,6 +18,7 @@
 # along with Confeitaria Static.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import os.path
+import contextlib
 
 import unittest
 
@@ -36,22 +37,32 @@ class ReferenceTestResourceStore(ReferenceStoreTestCase):
         """
         Create a resource store with the given arguments.
         """
-        return ResourceStore('m', default_file_name=default_file_name)
+        module, subdir = container
 
+        return ResourceStore(
+            module, subdir, default_file_name=default_file_name)
+
+    @contextlib.contextmanager
     def make_container(self):
         """
         Create an available module to add resources to.
         """
-        return available_module('m')
+        module = 'm'
+        subdir = 'resources'
+
+        with available_module(module):
+            yield module, subdir
 
     def make_document(self, name, where, content='', path=None):
         """
         Create a temporary resource in the "m" package.
         """
-        if path is not None:
-            name = os.path.join(path, name)
+        module, subdir = where
 
-        return available_resource('m', name, content=content)
+        if path is not None:
+            subdir = os.path.join(subdir, path)
+
+        return available_resource(module, name, where=subdir, content=content)
 
 
 load_tests = TestFinder(
