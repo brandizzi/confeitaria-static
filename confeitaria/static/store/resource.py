@@ -28,22 +28,25 @@ class ResourceStore(object):
         """
         ``ResourceStore``` is a store to read content from package resources.
 
-        Its constructor expets a package name. If this package has resources,
-        we can get the content of them by giving the ``read()`` method the
-        resource path::
+        Its constructor expects a package name and a directory inside this
+        package. If there are resources inside this package directory, we can
+        get the content of them by giving the ``read()`` method the resource
+        path::
 
         >>> from inelegant.module import available_module, available_resource
         >>> with available_module('m'), \\
-        ...         available_resource('m', 'test.html', content='example'):
-        ...     store = ResourceStore('m')
+        ...         available_resource(
+        ...             'm', 'test.html', where='resource_dir',
+        ...             content='example'):
+        ...     store = ResourceStore('m', 'resource_dir')
         ...     store.read('test.html')
         'example'
 
         If the resource does not exist, it will raise ``ValueError``::
 
         >>> with available_module('m'):
-        ...     store = ResourceStore('m')
-        ...     store.read('test.html')         # doctest: +ELLIPSIS
+        ...     store = ResourceStore('m', 'resource_dir')
+        ...     store.read('not_found.html')         # doctest: +ELLIPSIS
         Traceback (most recent call last):
           ...
         ValueError: ...
