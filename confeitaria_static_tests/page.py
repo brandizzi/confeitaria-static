@@ -155,6 +155,22 @@ class TestStaticPage(unittest.TestCase):
                 self.assertEquals(200, r.status_code)
                 self.assertEquals('example', r.text)
 
+    def test_page_has_default_index_html(self):
+        """
+        If we request the ``StaticPage`` root directory (e.g.
+        ``http://localhost:8000``) it should provide a document with a basic
+        introduction to the object itself.
+        """
+        with temp_dir() as d:
+            store = FileStore(directory=d)
+            page = StaticPage(store=store)
+
+            with Server(page):
+                r = requests.get('http://localhost:8000/index.html')
+
+                self.assertEquals(200, r.status_code)
+                self.assertTrue(r.text)
+
 
 load_tests = TestFinder(
     __name__,
