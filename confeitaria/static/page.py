@@ -22,7 +22,9 @@ import os
 import confeitaria.interfaces
 from confeitaria.responses import NotFound
 
+from confeitaria.static.store.aggregate import AggregateStore
 from confeitaria.static.store.file import FileStore
+from confeitaria.static.store.resource import ResourceStore
 
 
 class StaticPage(confeitaria.interfaces.Page):
@@ -47,11 +49,15 @@ class StaticPage(confeitaria.interfaces.Page):
     u'example'
     """
 
-    def __init__(self, directory=None, store=None):
+    def __init__(self, directory=None, store=None, resource_dir='content'):
         if store is None and directory is not None:
-            self.store = FileStore(directory=directory)
+            primary = FileStore(directory=directory)
         else:
-            self.store = store
+            primary = store
+
+        secondary = ResourceStore(self.__module__, resource_dir)
+
+        self.store = AggregateStore(primary, secondary)
 
     def index(self, *args):
         request = self.get_request()
